@@ -18,6 +18,7 @@ abstract class ConsumerTask : DefaultTask() {
     abstract val producedFile: RegularFileProperty
 
     @get:Input
+    @get:Optional
     val consumedString: Provider<String> = producedFile.map { it.asFile.readText() }
 
     @TaskAction
@@ -31,5 +32,5 @@ val producerTask by project.tasks.registering(ProducerTask::class) {
 }
 
 val consumerTask by project.tasks.creating(ConsumerTask::class) {
-    producedFile.set(producerTask.flatMap { it.producedFile })
+    producedFile.set(producerTask.map { it.producedFile.get() })
 }
